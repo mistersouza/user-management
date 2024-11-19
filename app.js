@@ -1,5 +1,5 @@
 const express = require('express');
-const exHandlebars = require('express-handlebars');
+const { engine } = require('express-handlebars');
 const path = require('path');
 const methodOverride = require('method-override');
 const redis = require('redis');
@@ -14,6 +14,27 @@ app.use(express.json());
 // URL parser
 app.use(express.urlencoded({ extended: false }));
 
+// Method override
+app.use(methodOverride('_method'));
+// Handlebars config
+app.engine('handlebars', engine({
+    defaultLayout: 'main',
+    layoutsDir: path.join(__dirname, 'views/layouts')
+}));
+app.set('view engine', 'handlebars');
+
+
+app.get('/', (request, response) => {
+    try {
+        response.render('searchusers', {
+            title: 'Search users',
+        })
+    } catch (error) {
+        response.status(500).render('error', { message: 'Failed to load search page' });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+
