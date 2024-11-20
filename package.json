@@ -15,6 +15,7 @@
   "author": "Thiago Souza",
   "license": "ISC",
   "dependencies": {
+    "bootstrap-icons": "^1.11.3",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "express-handlebars": "^8.0.1",
