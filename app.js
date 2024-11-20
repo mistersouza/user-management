@@ -48,6 +48,16 @@ app.get('/', (request, response) => {
         response.status(500).render('error', { message: 'Failed to load search page' });
     }
 });
+// Search user
+app.post('/users/search', (request, response) => {
+    const { id } = request.body;
+   
+    
+    response.render('userslist', {
+        title: 'User details',
+        users: dummyUsers.filter(user => user.id === id),
+    });
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
