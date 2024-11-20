@@ -41,7 +41,11 @@ app.get('/', (request, response) => {
         response.status(500).render('error', { message: 'Failed to load search page' });
     }
 });
-
+// Search users
+app.post('/users/search', (request, response) => {
+    const dummyUser = { id: 1, name: 'John Doe', email: 'john@example.com' };
+    response.json(dummyUser);
+});
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
