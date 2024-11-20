@@ -13,7 +13,14 @@ const app = express();
 app.use(express.json());
 // URL parser
 app.use(express.urlencoded({ extended: false }));
-
+// Redis client
+const client = redis.createClient();
+// Connect to Redis
+client.connect();
+// Check if Redis is connected
+client.on('connect', () => {
+    console.log('Connected to Redis...');
+});
 // Method override
 app.use(methodOverride('_method'));
 // Handlebars config
