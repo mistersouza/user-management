@@ -22,7 +22,8 @@ app.engine('handlebars', engine({
     layoutsDir: path.join(__dirname, 'views/layouts')
 }));
 app.set('view engine', 'handlebars');
-
+// Add these lines after your existing middleware setup
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (request, response) => {
     try {
