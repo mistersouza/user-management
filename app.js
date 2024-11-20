@@ -31,21 +31,24 @@ app.engine('handlebars', engine({
 app.set('view engine', 'handlebars');
 // Add these lines after your existing middleware setup
 app.use(express.static(path.join(__dirname, 'public')));
-
+ 
+const dummyUsers = [
+    { id: '1', first_name: 'John', last_name: 'Doe', email: 'john@example.com' },
+    { id: '2', first_name: 'Jane', last_name: 'Smith', email: 'jane@example.com' },
+    { id: '3', first_name: 'Tom', last_name: 'Brown', email: 'tom@example.com' },
+];
+// Get all users
 app.get('/', (request, response) => {
     try {
-        response.render('searchusers', {
-            title: 'Search users',
+        response.render('userslist', {
+            title: 'All users',
+            users: dummyUsers
         })
     } catch (error) {
         response.status(500).render('error', { message: 'Failed to load search page' });
     }
 });
-// Search users
-app.post('/users/search', (request, response) => {
-    const dummyUser = { id: 1, name: 'John Doe', email: 'john@example.com' };
-    response.json(dummyUser);
-});
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
