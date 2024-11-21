@@ -65,6 +65,10 @@ app.post('/users/search', async (request, response) => {
         users: filteredUsers
     });
 });
+// New user form
+app.get('/users/new', (request, response) => {
+    response.render('newuserform');
+});
 // Get user by ID
 app.get('/users/:id', async (request, response) => {
     const { id } = request.params;
