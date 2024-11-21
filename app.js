@@ -65,12 +65,13 @@ app.post('/users/search', async (request, response) => {
         users: filteredUsers
     });
 });
-
+// Get user by ID
 app.get('/users/:id', async (request, response) => {
     const { id } = request.params;
     const user = cachedUsers.find(user => user.id === id);
+    
     response.render('userdetails', {
-        title: `{user.first_name}'s profile`,
+        title: `${user.first_name}'s profile`,
         user
     });
 });
