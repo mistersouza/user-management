@@ -1,0 +1,21 @@
+<div class="container py-4">
+  <div class="card mx-auto" style="max-width: 540px;">
+    <div class="row g-0">
+      <div class="col-md-4 p-3">
+        <img src="https://ui-avatars.com/api/?name={{user.first_name}}+{{user.last_name}}&rounded=true&size=128" 
+             class="img-fluid rounded-circle" 
+             alt="{{user.first_name}} {{user.last_name}}">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h2 class="card-title px-3 fs-3">{{user.first_name}} {{user.last_name}}</h5>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>ID:</strong> {{user.id}}</li>
+            <li class="list-group-item"><strong>Email:</strong> {{user.email}}</li>
+            <li class="list-group-item"><strong>Department:</strong> {{user.department}}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

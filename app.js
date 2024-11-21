@@ -61,9 +61,17 @@ app.post('/users/search', async (request, response) => {
         user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.department.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
     response.render('userslist', {
         users: filteredUsers
+    });
+});
+
+app.get('/users/:id', async (request, response) => {
+    const { id } = request.params;
+    const user = cachedUsers.find(user => user.id === id);
+    response.render('userdetails', {
+        title: `{user.first_name}'s profile`,
+        user
     });
 });
 
