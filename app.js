@@ -69,6 +69,9 @@ app.post('/users/search', async (request, response) => {
 app.get('/users/:id', async (request, response) => {
     const { id } = request.params;
     const user = cachedUsers.find(user => user.id === id);
+
+    if (!user)
+        return response.status(404).render('usernotfound', { message: "User's gone MIA! Let's get you back on track." });
     
     response.render('userdetails', {
         title: `${user.first_name}'s profile`,
