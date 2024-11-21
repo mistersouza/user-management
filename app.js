@@ -31,33 +31,38 @@ app.engine('handlebars', engine({
 app.set('view engine', 'handlebars');
 // Add these lines after your existing middleware setup
 app.use(express.static(path.join(__dirname, 'public')));
- 
+// Store users at app level
+let cachedUsers = [];
 // Get all users
 app.get('/', async (request, response) => {
     try {
         const keys = await client.keys('user:*');
 
-        const users = await Promise.all(
+        cachedUsers = await Promise.all(
             keys.map(async key => {
                 return await client.hGetAll(key);
             })
         );
         response.render('userslist', {
             title: 'All users',
-            users: users,
+            users: cachedUsers,
         });
     } catch (error) {
         response.status(500).render('error', { message: 'Failed loading users' });
     }
 });
 // Search user
-app.post('/users/search', (request, response) => {
-    const { id } = request.body;
-   
-    
+app.post('/users/search', async (request, response) => {
+    const { searchTerm } = request.body;
+    const filteredUsers = cachedUsers.filter(user => 
+        user.id === searchTerm ||
+        user.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     response.render('userslist', {
-        title: 'User details',
-        users: dummyUsers.filter(user => user.id === id),
+        users: filteredUsers
     });
 });
 
