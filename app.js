@@ -26,7 +26,7 @@ app.use(methodOverride('_method'));
 // Handlebars config
 app.engine('handlebars', engine({
     defaultLayout: 'main',
-    layoutsDir: path.join(__dirname, 'views/layouts')
+    layoutsDir: path.join(__dirname, 'views/layouts'),
 }));
 app.set('view engine', 'handlebars');
 // Add these lines after your existing middleware setup
