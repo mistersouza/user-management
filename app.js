@@ -61,12 +61,12 @@ app.post('/users', async (request, response) => {
     const { first_name, last_name, email, department } = request.body;
     const id = shortid.generate();
     const user = { id, first_name, last_name, email, department };
-    
-    response.status(201).json({
-        success: true,
-        message: 'User created successfully',
-        data: user
-    });
+   try {
+        await client.hSet(`user:${id}`, user);
+        response.redirect('/');
+    } catch (error) {
+        response.status(500).render('error', { message: 'Failed to create user' });
+    }
 });
 
 // Search user
