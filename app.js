@@ -30,7 +30,6 @@ app.engine('handlebars', engine({
     defaultLayout: 'main',
     layoutsDir: path.join(__dirname, 'views/layouts'),
     helpers: {
-        getErrors: (errors, field) => (errors.find(error => error.path === field)),
         equals: (a, b) => a === b
     },
 }));
