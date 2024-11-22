@@ -14,8 +14,21 @@
             <li class="list-group-item"><strong>Email:</strong> {{user.email}}</li>
             <li class="list-group-item"><strong>Department:</strong> {{user.department}}</li>
           </ul>
+          <div class="d-flex justify-content-end gap-2 p-3">
+            <a href="/users/edit/{{user.id}}" class="btn btn-outline-secondary" id="editBtn">
+              <i class="bi bi-pencil"></i>
+            </a>
+            <form action="/users/{{user.id}}?_method=DELETE" method="POST" class="d-inline">
+              <button type="button" class="btn btn-secondary" id="deleteBtn" onclick="deleteUser()">
+                <i class="bi bi-trash"></i>
+              </button>
+            </form>
+          </div>
+
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<script src="/js/details.js"></script>

@@ -80,8 +80,6 @@ const validateUser = [
 app.post('/users', validateUser, async (request, response) => {
     const errors = validationResult(request);
     if (!errors.isEmpty()) {
-        console.log('Validation errors:', errors.array());
-
         return response.status(400).render('newuserform', {
             errors: errors.array(),
             input: request.body,
@@ -124,6 +122,18 @@ app.get('/users/:id', async (request, response) => {
         title: `${user.first_name}'s profile`,
         user
     });
+});
+// Delete user
+app.delete('/users/:id', async (request, response) => {
+    console.log('Delete route hit with ID:', request.params.id);
+    const { id } = request.params;
+    const user = cachedUsers.find(user => user.id === id);
+
+    if (!user)
+        return response.status(404).render('usernotfound', { message: "User's gone MIA! Let's get you back on track." });
+
+    await client.del(`user:${id}`);
+    response.redirect('/');
 });
 
 app.listen(PORT, () => {
