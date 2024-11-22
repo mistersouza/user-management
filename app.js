@@ -4,6 +4,7 @@ const path = require('path');
 const methodOverride = require('method-override');
 const redis = require('redis');
 const shortid = require('shortid');
+const { body, validationResult } = require('express-validator');
 require('dotenv').config();
 
 // Get port from .env file
@@ -28,6 +29,10 @@ app.use(methodOverride('_method'));
 app.engine('handlebars', engine({
     defaultLayout: 'main',
     layoutsDir: path.join(__dirname, 'views/layouts'),
+    helpers: {
+        getErrors: (errors, field) => (errors.find(error => error.path === field)),
+        equals: (a, b) => a === b
+    },
 }));
 app.set('view engine', 'handlebars');
 // Add these lines after your existing middleware setup
@@ -56,12 +61,36 @@ app.get('/', async (request, response) => {
 app.get('/users/new', (request, response) => {
     response.render('newuserform');
 });
+// Validation middleware
+const validateUser = [
+    body('first_name')
+        .trim()
+        .isLength({ min: 2 }).withMessage('First name must be at least 2 characters'),
+    body('last_name')
+        .trim()
+        .isLength({ min: 2 }).withMessage('Last name must be at least 2 characters'),
+    body('email')
+        .trim()
+        .isEmail().withMessage('Please enter a valid email'),
+    body('department')
+        .trim()
+        .notEmpty().withMessage('Department is required')
+];
 // Create new user
-app.post('/users', async (request, response) => {
-    const { first_name, last_name, email, department } = request.body;
-    const id = shortid.generate();
-    const user = { id, first_name, last_name, email, department };
+app.post('/users', validateUser, async (request, response) => {
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+        console.log('Validation errors:', errors.array());
+
+        return response.status(400).render('newuserform', {
+            errors: errors.array(),
+            input: request.body,
+        });
+    }
    try {
+        const { first_name, last_name, email, department } = request.body;
+        const id = shortid.generate();
+        const user = { id, first_name, last_name, email, department };
         await client.hSet(`user:${id}`, user);
         response.redirect('/');
     } catch (error) {

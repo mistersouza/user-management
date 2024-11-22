@@ -6,7 +6,21 @@
                     <label for="first_name" class="visually-hidden">First Name</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-person"></i></span>
-                        <input type="text" name="first_name" class="form-control" placeholder="First Name" required>
+                        <input 
+                            class="form-control {{#if errors}}is-invalid{{/if}}" 
+                            type="text" 
+                            id="first_name"
+                            name="first_name" 
+                            value="{{input.first_name}}"
+                            placeholder="First Name" 
+                        >
+                        {{#if errors}}
+                            {{#each errors}}
+                                {{#if (equals path "first_name")}}
+                                    <div class="invalid-feedback px-1">{{msg}}</div>
+                                {{/if}}
+                            {{/each}}
+                        {{/if}}
                     </div>
                 </div>
                 
@@ -14,7 +28,20 @@
                     <label for="last_name" class="visually-hidden">Last Name</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-person"></i></span>
-                        <input type="text" name="last_name" class="form-control" placeholder="Last Name" required>
+                        <input
+                            class="form-control {{#if errors}}is-invalid{{/if}}"
+                            type="text"
+                            name="last_name"
+                            value="{{input.last_name}}"
+                            placeholder="Last Name" 
+                        >
+                        {{#if errors}}
+                            {{#each errors}}
+                                {{#if (equals path "last_name")}}
+                                    <div class="invalid-feedback px-1">{{msg}}</div>
+                                {{/if}}
+                            {{/each}}
+                        {{/if}}
                     </div>
                 </div>
                 
@@ -22,7 +49,20 @@
                     <label for="email" class="visually-hidden">Email</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                        <input type="email" name="email" class="form-control" placeholder="Email" required>
+                        <input 
+                            class="form-control {{#if errors}}is-invalid{{/if}}" 
+                            type="email" 
+                            name="email"
+                            value="{{input.email}}" 
+                            placeholder="Email"
+                        >
+                        {{#if errors}}
+                            {{#each errors}}
+                                {{#if (equals path "email")}}
+                                    <div class="invalid-feedback px-1">{{msg}}</div>
+                                {{/if}}
+                            {{/each}}
+                        {{/if}}
                     </div>
                 </div>
                 
@@ -30,7 +70,20 @@
                     <label for="department" class="visually-hidden">Department</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-building"></i></span>
-                        <input type="text" name="department" class="form-control" placeholder="Department" required>
+                        <input 
+                            class="form-control {{#if errors}}is-invalid{{/if}}" 
+                            type="text" 
+                            name="department"
+                            value="{{input.department}}"
+                            placeholder="Department"
+                        >
+                        {{#if errors}}
+                            {{#each errors}}
+                                {{#if (equals path "department")}}
+                                    <div class="invalid-feedback px-1">{{msg}}</div>
+                                {{/if}}
+                            {{/each}}
+                        {{/if}}
                     </div>
                 </div>
                 
