@@ -3,6 +3,7 @@ const { engine } = require('express-handlebars');
 const path = require('path');
 const methodOverride = require('method-override');
 const redis = require('redis');
+const shortid = require('shortid');
 require('dotenv').config();
 
 // Get port from .env file
@@ -58,7 +59,7 @@ app.get('/users/new', (request, response) => {
 // Create new user
 app.post('/users', async (request, response) => {
     const { first_name, last_name, email, department } = request.body;
-    const id = Date.now().toString();
+    const id = shortid.generate();
     const user = { id, first_name, last_name, email, department };
     
     response.status(201).json({
