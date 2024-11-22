@@ -51,6 +51,23 @@ app.get('/', async (request, response) => {
         response.status(500).render('error', { message: 'Failed loading users' });
     }
 });
+// New user form
+app.get('/users/new', (request, response) => {
+    response.render('newuserform');
+});
+// Create new user
+app.post('/users', async (request, response) => {
+    const { first_name, last_name, email, department } = request.body;
+    const id = Date.now().toString();
+    const user = { id, first_name, last_name, email, department };
+    
+    response.status(201).json({
+        success: true,
+        message: 'User created successfully',
+        data: user
+    });
+});
+
 // Search user
 app.post('/users/search', async (request, response) => {
     const { searchTerm } = request.body;
@@ -64,10 +81,6 @@ app.post('/users/search', async (request, response) => {
     response.render('userslist', {
         users: filteredUsers
     });
-});
-// New user form
-app.get('/users/new', (request, response) => {
-    response.render('newuserform');
 });
 // Get user by ID
 app.get('/users/:id', async (request, response) => {
