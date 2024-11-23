@@ -8,16 +8,27 @@
       </div>
       <div class="col-md-8">
         <div class="card-body">
-          <h2 class="card-title px-3 fs-3">{{user.first_name}} {{user.last_name}}</h5>
+          <h2 class="card-title px-3 fs-3">
+            <span id="fullName">{{user.first_name}} {{user.last_name}}</span>
+            <i class="bi bi-pencil ms-2 small text-secondary cursor-pointer edit-icon d-none" data-field="name"></i>
+          </h2>
           <ul class="list-group list-group-flush">
             <li class="list-group-item"><strong>ID:</strong> {{user.id}}</li>
-            <li class="list-group-item"><strong>Email:</strong> {{user.email}}</li>
-            <li class="list-group-item"><strong>Department:</strong> {{user.department}}</li>
+            <li class="list-group-item">
+              <strong>Email:</strong> 
+              <span id="email">{{user.email}}</span>
+              <i class="bi bi-pencil ms-2 small text-secondary cursor-pointer edit-icon d-none" data-field="email"></i>
+            </li>
+            <li class="list-group-item">
+              <strong>Department:</strong> 
+              <span id="department">{{user.department}}</span>
+              <i class="bi bi-pencil ms-2 small text-secondary cursor-pointer edit-icon d-none" data-field="department"></i>
+            </li>
           </ul>
           <div class="d-flex justify-content-end gap-2 p-3">
-            <a href="/users/edit/{{user.id}}" class="btn btn-outline-secondary" id="editBtn">
-              <i class="bi bi-pencil"></i>
-            </a>
+           <button type="button" class="btn btn-outline-secondary" id="editBtn" onclick="editUser()">
+                <i class="bi bi-pencil"></i>
+            </button>
             <form action="/users/{{user.id}}?_method=DELETE" method="POST" class="d-inline">
               <button type="button" class="btn btn-secondary" id="deleteBtn" onclick="deleteUser()">
                 <i class="bi bi-trash"></i>

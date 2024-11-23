@@ -28,3 +28,8 @@ const resetButtons = () => {
     editBtn.onclick = null;
     editBtn.href = `/users/edit/{{user.id}}`;
 }
+
+const editUser = () => {
+    const icons = document.querySelectorAll('.edit-icon');
+    icons.forEach(icon => icon.classList.toggle('d-none'));
+};
