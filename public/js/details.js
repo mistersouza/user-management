@@ -29,13 +29,16 @@ const resetButtons = () => {
     editBtn.href = `/users/edit/{{user.id}}`;
 }
 
+let isEditMode = false;
+
 const editUser = () => {
     const icons = document.querySelectorAll('.edit-icon');
     const editBtn = document.getElementById('editBtn');
     const deleteBtn = document.getElementById('deleteBtn');
 
     icons.forEach(icon => icon.classList.toggle('d-none'));
-    
+    isEditMode = !isEditMode;
+
     if (editBtn.textContent.trim() === 'Nevermind') {
         editBtn.innerHTML = '<i class="bi bi-pencil"></i>';
         deleteBtn.innerHTML = '<i class="bi bi-trash"></i>';
