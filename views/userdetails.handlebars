@@ -10,19 +10,20 @@
         <div class="card-body">
           <h2 class="card-title px-3 fs-3">
             <span id="fullName">{{user.first_name}} {{user.last_name}}</span>
-            <i class="bi bi-pencil ms-2 small fs-6 text-secondary cursor-pointer edit-icon d-none" data-field="name"></i>
+            <i class="bi bi-pencil ms-2 small fs-6 text-secondary cursor-pointer edit-icon d-none" data-field="name" onclick="handleIconClick(this)"></i>
           </h2>
           <ul class="list-group list-group-flush">
             <li class="list-group-item"><strong>ID:</strong> {{user.id}}</li>
             <li class="list-group-item">
               <strong>Email:</strong> 
               <span id="email">{{user.email}}</span>
-              <i class="bi bi-pencil ms-2 small text-secondary cursor-pointer edit-icon d-none" data-field="email"></i>
+              <i class="bi bi-pencil ms-2 small fs-6 text-secondary cursor-pointer edit-icon d-none" data-field="name" onclick="handleIconClick(this)"></i>
+
             </li>
             <li class="list-group-item">
               <strong>Department:</strong> 
               <span id="department">{{user.department}}</span>
-              <i class="bi bi-pencil ms-2 small text-secondary cursor-pointer edit-icon d-none" data-field="department"></i>
+              <i class="bi bi-pencil ms-2 small fs-6 text-secondary cursor-pointer edit-icon d-none" data-field="name" onclick="handleIconClick(this)"></i>
             </li>
           </ul>
           <div class="d-flex justify-content-end gap-2 p-3">
