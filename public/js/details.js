@@ -1,69 +1,78 @@
-const deleteUser = (id) => {
-    const deleteBtn = document.querySelector('#deleteBtn');
-    const editBtn = document.querySelector('#editBtn');
+let isEditMode = false;
+
+const getButtons = () => ({
+    deleteBtn: document.querySelector('#deleteBtn'),
+    editBtn: document.querySelector('#editBtn'),
+    fieldEditButtons: document.querySelectorAll('.field-edit-button')
+});
+
+const handleButtonClasses = (button, ...classes) => {
+    classes.length > 1
+    ? button.classList.replace(...classes)
+    : button.classList.toggle(classes.at(0));
+};
+
+const deleteUser = () => {
+    const { deleteBtn, editBtn } = getButtons();
     
     deleteBtn.innerHTML = 'Trash it<i class="bi bi-exclamation-lg"></i>';
-    deleteBtn.classList.replace('btn-secondary', 'btn-danger');
+    handleButtonClasses(deleteBtn, 'btn-secondary', 'btn-danger');
     editBtn.innerHTML = 'Back Out';
-    editBtn.classList.replace('btn-outline-secondary', 'btn-outline-success');
+    handleButtonClasses(editBtn, 'btn-outline-secondary', 'btn-outline-success');
     
     deleteBtn.onclick = () => deleteBtn.closest('form').submit();;
-
-    editBtn.onclick = (e) => {
-        e.preventDefault();
-        resetButtons();
-    }
+    editBtn.onclick = () => resetButtons();
 };
 
 const resetButtons = () => {
-    const deleteBtn = document.querySelector('#deleteBtn');
-    const editBtn = document.querySelector('#editBtn');
+    const { deleteBtn, editBtn } = getButtons();
     
     deleteBtn.innerHTML = '<i class="bi bi-trash"></i>';
-    deleteBtn.classList.replace('btn-danger', 'btn-secondary');
+    handleButtonClasses(deleteBtn, 'btn-danger', 'btn-secondary');
     editBtn.innerHTML = '<i class="bi bi-pencil"></i>';
-    editBtn.classList.replace('btn-outline-success', 'btn-outline-secondary');
+    handleButtonClasses(editBtn, 'btn-outline-success', 'btn-outline-secondary');
     
     deleteBtn.onclick = deleteUser;
-    editBtn.onclick = null;
-    editBtn.href = `/users/edit/{{user.id}}`;
-}
+    editBtn.onclick = editUser;
+};
 
-const handleIconClick = (icon) => {
-    const field = icon.dataset.field;
-    const span = icon.previousElementSibling;
-    const currentValue = span.textContent.trim();
-    
+const createInput = (value) => {
     const input = document.createElement('input');
-    input.type = field === 'email' ? 'email' : 'text';
-    input.value = currentValue;
+    input.type = 'text';
+    input.value = value;
     input.className = 'form-control form-control-sm d-inline-block';
     input.style.minWidth = '100px';
-    input.style.maxWidth = `${currentValue.length + 2}ch`;
+    input.style.maxWidth = `${value.length + 2}ch`;
+    return input;
+};
+
+const updateSpan = (input, span) => {
+    span.textContent = input.value;
+    input.replaceWith(span);
+};
+
+handleFieldEditClick = (button) => {
+    const field = button.dataset.field;
+
+    const span = button.previousElementSibling;
+    const currentValue = span.textContent.trim();
+    
+    const input = createInput(currentValue);
+    input.type = field === 'email' ? 'email' : 'text';
     
     span.replaceWith(input);
     input.focus();
     
-    input.addEventListener('blur', () => {
-        span.textContent = input.value;
-        input.replaceWith(span)
-    });
+    input.addEventListener('blur', () => updateSpan(input, span));
 };
 
-document.querySelectorAll('.edit-icon').forEach(icon => {
-    icon.addEventListener('click', () => handleIconClick(icon));
-});
-
-let isEditMode = false;
 
 const editUser = () => {
-    const icons = document.querySelectorAll('.edit-icon');
-    const editBtn = document.getElementById('editBtn');
-    const deleteBtn = document.getElementById('deleteBtn');
+    const { deleteBtn, editBtn, fieldEditButtons } = getButtons();
 
-    icons.forEach(icon => {
-        icon.classList.toggle('d-none')
-        icon.addEventListener('click', () => handleIconClick(icon));
+    fieldEditButtons.forEach(button => {
+        handleButtonClasses(button, 'd-none');
+        button.onclick = () => handleFieldEditClick(button);
     });
 
     isEditMode = !isEditMode;
@@ -71,10 +80,10 @@ const editUser = () => {
     if (!isEditMode) {
         editBtn.innerHTML = '<i class="bi bi-pencil"></i>';
         deleteBtn.innerHTML = '<i class="bi bi-trash"></i>';
-        deleteBtn.classList.toggle('btn-success');
+        handleButtonClasses(deleteBtn, 'btn-success');
     } else {
         editBtn.textContent = 'Nevermind';
         deleteBtn.textContent = 'Sync-Up';
-        deleteBtn.classList.toggle('btn-success');
+        handleButtonClasses(deleteBtn, 'btn-success');
     }
 };
