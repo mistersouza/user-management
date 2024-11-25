@@ -54,6 +54,33 @@ const updateSpan = (input, span) => {
 handleFieldEditClick = (button) => {
     const field = button.dataset.field;
 
+    if (field === 'name') {
+        const spans = document.querySelectorAll('.name');
+        
+        if (spans.length) {
+            const elements = [...spans].map(span => {
+                const input = createInput(span.textContent.trim());
+                input.id = span.id;
+                span.replaceWith(input);
+                return { input, span };
+            });
+
+            elements[0].input.focus();
+            
+            elements.forEach(({ input, span }) => {
+                input.addEventListener('blur', () => {
+                    setTimeout(() => {
+                        const activeId = document.activeElement.id;
+                        if (!activeId || (activeId !== 'firstName' && activeId !== 'lastName')) {
+                            elements.forEach(({ input, span }) => updateSpan(input, span));
+                        }
+                    }, 0);
+                });
+            });
+        }
+        return;
+    }
+
     const span = button.previousElementSibling;
     const currentValue = span.textContent.trim();
     
