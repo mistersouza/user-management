@@ -71,7 +71,7 @@ handleFieldEditClick = (button) => {
                 input.addEventListener('blur', () => {
                     setTimeout(() => {
                         const activeId = document.activeElement.id;
-                        if (!activeId || (activeId !== 'firstName' && activeId !== 'lastName')) {
+                        if (!activeId || !['firstName', 'lastName'].includes(activeId)) {
                             elements.forEach(({ input, span }) => updateSpan(input, span));
                         }
                     }, 0);
