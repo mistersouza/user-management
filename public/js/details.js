@@ -93,7 +93,6 @@ handleFieldEditClick = (button) => {
     input.addEventListener('blur', () => updateSpan(input, span));
 };
 
-
 const editUser = () => {
     const { deleteBtn, editBtn, fieldEditButtons } = getButtons();
 
