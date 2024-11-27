@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { validationResult } = require('express-validator');
 const shortid = require('shortid');
-const { validateUser } = require('../middleware/validation');
+const { validateUser } = require('../middleware/userValidation');
 const { handleUserNotFound } = require('../utils/errorHandlers');
 const client = require('../config/redis');
 
@@ -18,7 +18,7 @@ router.get('/', async (request, response) => {
     }
 });
 // New user form
-router.get('/new', (request, response) => {
+router.get('/users/new', (request, response) => {
     response.render('newuserform');
 });
 // Create new user
@@ -35,7 +35,7 @@ router.post('/users', validateUser, async (request, response) => {
         const id = shortid.generate();
         const user = { id, first_name, last_name, email, department };
         await client.hSet(`user:${id}`, user);
-        cachedUsers[id] = user;
+        request.cachedUsers[id] = user;
         response.redirect('/');
     } catch (error) {
         response.status(500).render('error', { message: 'Failed to create user' });
@@ -73,13 +73,13 @@ router.get('/users/:id', async (request, response) => {
 });
 // Delete user
 router.delete('/users/:id', async (request, response) => {
-    console.log('Delete route hit with ID:', request.params.id);
     const { id } = request.params;
     const user = request.cachedUsers[id];
 
     if (!user) return handleUserNotFound(response);
 
     await client.del(`user:${id}`);
+    delete request.cachedUsers[id];
     response.redirect('/');
 });
 // Update user
@@ -110,6 +110,8 @@ router.patch('/users/:id', async (request, response) => {
         message: 'User updated successfully',
         user: request.cachedUsers[id],
     });
+
+    response.redirect('/');
 });
 
 module.exports = router;

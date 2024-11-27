@@ -2,7 +2,7 @@ const express = require('express');
 const { engine } = require('express-handlebars');
 const path = require('path');
 const methodOverride = require('method-override');
-const { initializeCache, attachCachedUsersToRequest } = require('./middleware/users');
+const { initializeCache, attachCachedUsersToRequest } = require('./middleware/usersCache');
 require('dotenv').config();
 
 // Get port from .env file
