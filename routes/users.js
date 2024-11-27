@@ -7,7 +7,7 @@ const router = express.Router();
 
 // Store users at app level
 let cachedUsers = {};
-
+// Get all users
 router.get('/', async (request, response) => {
     try {
         const keys = await client.keys('user:*');
@@ -32,12 +32,10 @@ router.get('/', async (request, response) => {
         response.status(500).render('error', { message: 'Failed loading users' });
     }
 });
-
 // New user form
 router.get('/users/new', (request, response) => {
     response.render('newuserform');
 });
-
 // Create new user
 router.post('/users', validateUser, async (request, response) => {
     const errors = validationResult(request);
@@ -57,30 +55,21 @@ router.post('/users', validateUser, async (request, response) => {
         response.status(500).render('error', { message: 'Failed to create user' });
     }
 });
-
 // Search user
 router.post('/users/search', async (request, response) => {
     const { searchTerm } = request.body;
-    const filteredUsers = [];
-
-    for (const userId in cachedUsers) {
-        const user = cachedUsers[userId];
-        if (
-            user.id === searchTerm ||
-            user.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.department.toLowerCase().includes(searchTerm.toLowerCase())
-        ) {
-            filteredUsers.push(user);
-        }
-    }
+    const filteredUsers = Object.values(cachedUsers).filter(user => 
+        user.id === searchTerm ||
+        user.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.department.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     response.render('userslist', {
         users: filteredUsers
     });
 });
-
 // Get user by ID
 router.get('/users/:id', async (request, response) => {
     const { id } = request.params;
