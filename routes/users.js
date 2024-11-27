@@ -1,39 +1,24 @@
 const express = require('express');
+const router = express.Router();
+const { validationResult } = require('express-validator');
 const shortid = require('shortid');
 const { validateUser } = require('../middleware/validation');
 const { handleUserNotFound } = require('../utils/errorHandlers');
-const { validationResult } = require('express-validator');
 const client = require('../config/redis');
-const router = express.Router();
 
-// Store users at app level
-let cachedUsers = {};
 // Get all users
 router.get('/', async (request, response) => {
     try {
-        const keys = await client.keys('user:*');
-        const usersArray = await Promise.all(
-            keys.map(async key => {
-                const user = await client.hGetAll(key);
-                if (user && user.id) return user;
-            })
-        );
-        // Get users into an object by user ID
-        cachedUsers = usersArray.reduce((users, user) => {
-            users[user.id] = user; 
-            return users;
-        }, {});
-
         response.render('userslist', {
             title: 'All users',
-            users: Object.values(cachedUsers), 
+            users: Object.values(request.cachedUsers), 
         });
     } catch (error) {
         response.status(500).render('error', { message: 'Failed loading users' });
     }
 });
 // New user form
-router.get('/users/new', (request, response) => {
+router.get('/new', (request, response) => {
     response.render('newuserform');
 });
 // Create new user
@@ -50,6 +35,7 @@ router.post('/users', validateUser, async (request, response) => {
         const id = shortid.generate();
         const user = { id, first_name, last_name, email, department };
         await client.hSet(`user:${id}`, user);
+        cachedUsers[id] = user;
         response.redirect('/');
     } catch (error) {
         response.status(500).render('error', { message: 'Failed to create user' });
@@ -76,7 +62,7 @@ router.post('/users/search', async (request, response) => {
 // Get user by ID
 router.get('/users/:id', async (request, response) => {
     const { id } = request.params;
-    const user = cachedUsers[id];
+    const user = request.cachedUsers[id];
 
     if (!user) return handleUserNotFound(response);
     
@@ -85,12 +71,11 @@ router.get('/users/:id', async (request, response) => {
         user
     });
 });
-
 // Delete user
 router.delete('/users/:id', async (request, response) => {
     console.log('Delete route hit with ID:', request.params.id);
     const { id } = request.params;
-    const user = cachedUsers[id];
+    const user = request.cachedUsers[id];
 
     if (!user) return handleUserNotFound(response);
 
