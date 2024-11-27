@@ -82,5 +82,34 @@ router.delete('/users/:id', async (request, response) => {
     await client.del(`user:${id}`);
     response.redirect('/');
 });
+// Update user
+router.patch('/users/:id', async (request, response) => {
+    const { id } = request.params;
+    const user = request.cachedUsers[id];
+
+    if (!user) return handleUserNotFound(response);
+
+    const { first_name, last_name, email, department } = request.body;
+    
+    await client.hSet(`user:${id}`, {
+        first_name,
+        last_name,
+        email,
+        department
+    });
+    
+    request.cachedUsers[id] = {
+        id,
+        first_name: first_name || user.first_name,
+        last_name: last_name || user.last_name,
+        email: email || user.email,
+        department: department || user.department,
+    };
+
+    response.json({
+        message: 'User updated successfully',
+        user: request.cachedUsers[id],
+    });
+});
 
 module.exports = router;
