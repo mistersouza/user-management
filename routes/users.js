@@ -6,21 +6,27 @@ const client = require('../config/redis');
 const router = express.Router();
 
 // Store users at app level
-let cachedUsers = [];
+let cachedUsers = {};
 
-// Get all users
 router.get('/', async (request, response) => {
     try {
         const keys = await client.keys('user:*');
-        cachedUsers = await Promise.all(
+        const usersArray = await Promise.all(
             keys.map(async key => {
-                return await client.hGetAll(key);
+                const user = await client.hGetAll(key);
+                if (user && user.id) return user;
             })
         );
-        console.log('Cached users:', cachedUsers);
+
+        // Get users into an object by user ID
+        cachedUsers = usersArray.reduce((users, user) => {
+            users[user.id] = user; 
+            return users;
+        }, {});
+
         response.render('userslist', {
             title: 'All users',
-            users: cachedUsers,
+            users: Object.values(cachedUsers), 
         });
     } catch (error) {
         response.status(500).render('error', { message: 'Failed loading users' });
@@ -55,13 +61,21 @@ router.post('/users', validateUser, async (request, response) => {
 // Search user
 router.post('/users/search', async (request, response) => {
     const { searchTerm } = request.body;
-    const filteredUsers = cachedUsers.filter(user => 
-        user.id === searchTerm ||
-        user.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.department.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredUsers = [];
+
+    for (const userId in cachedUsers) {
+        const user = cachedUsers[userId];
+        if (
+            user.id === searchTerm ||
+            user.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.department.toLowerCase().includes(searchTerm.toLowerCase())
+        ) {
+            filteredUsers.push(user);
+        }
+    }
+
     response.render('userslist', {
         users: filteredUsers
     });
@@ -70,7 +84,7 @@ router.post('/users/search', async (request, response) => {
 // Get user by ID
 router.get('/users/:id', async (request, response) => {
     const { id } = request.params;
-    const user = cachedUsers.find(user => user.id === id);
+    const user = cachedUsers[id];
 
     if (!user)
         return response.status(404).render('usernotfound', { message: "User's gone MIA! Let's get you back on track." });
@@ -85,7 +99,7 @@ router.get('/users/:id', async (request, response) => {
 router.delete('/users/:id', async (request, response) => {
     console.log('Delete route hit with ID:', request.params.id);
     const { id } = request.params;
-    const user = cachedUsers.find(user => user.id === id);
+    const user = cachedUsers[id];
 
     if (!user)
         return response.status(404).render('usernotfound', { message: "User's gone MIA! Let's get you back on track." });
