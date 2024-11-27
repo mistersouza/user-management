@@ -1,6 +1,7 @@
 const express = require('express');
 const shortid = require('shortid');
 const { validateUser } = require('../middleware/validation');
+const { handleUserNotFound } = require('../utils/errorHandlers');
 const { validationResult } = require('express-validator');
 const client = require('../config/redis');
 const router = express.Router();
@@ -17,7 +18,6 @@ router.get('/', async (request, response) => {
                 if (user && user.id) return user;
             })
         );
-
         // Get users into an object by user ID
         cachedUsers = usersArray.reduce((users, user) => {
             users[user.id] = user; 
@@ -65,7 +65,7 @@ router.post('/users/search', async (request, response) => {
         user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.department.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
+    
     response.render('userslist', {
         users: filteredUsers
     });
@@ -75,8 +75,7 @@ router.get('/users/:id', async (request, response) => {
     const { id } = request.params;
     const user = cachedUsers[id];
 
-    if (!user)
-        return response.status(404).render('usernotfound', { message: "User's gone MIA! Let's get you back on track." });
+    if (!user) return handleUserNotFound(response);
     
     response.render('userdetails', {
         title: `${user.first_name}'s profile`,
@@ -90,8 +89,7 @@ router.delete('/users/:id', async (request, response) => {
     const { id } = request.params;
     const user = cachedUsers[id];
 
-    if (!user)
-        return response.status(404).render('usernotfound', { message: "User's gone MIA! Let's get you back on track." });
+    if (!user) return handleUserNotFound(response);
 
     await client.del(`user:${id}`);
     response.redirect('/');
