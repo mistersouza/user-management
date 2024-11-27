@@ -65,7 +65,10 @@ router.post('/users/search', async (request, response) => {
         user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.department.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    
+
+    if (!filteredUsers.length)
+        return handleUserNotFound(response, 'We searched high and low but found no matches. Try again!');
+
     response.render('userslist', {
         users: filteredUsers
     });
